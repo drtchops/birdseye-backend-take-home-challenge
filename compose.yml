@@ -20,8 +20,10 @@ services:
       target: development
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+      - "5678:5678"
+    environment:
+      - DATABASE_URL=postgresql+psycopg_async://birdseye:birdseye@db/birdseye
+    command: sh startlocal.sh
     depends_on:
       db:
         condition: service_healthy
