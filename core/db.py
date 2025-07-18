@@ -3,7 +3,10 @@ from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from . import models  # noqa: F401 # pyright: ignore[reportUnusedImport] ensure models are registered
+# ensure models are registered
+from shortlinks import models as shortlinks_models  # noqa: F401  # pyright: ignore[reportUnusedImport]
+from stats import models as stats_models  # noqa: F401 # pyright: ignore[reportUnusedImport]
+
 from .config import get_settings
 
 settings = get_settings()

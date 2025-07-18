@@ -3,7 +3,7 @@ import shortuuid
 from httpx import AsyncClient
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from src.models import Shortlink
+from shortlinks.models import Shortlink
 
 pytestmark = pytest.mark.anyio
 

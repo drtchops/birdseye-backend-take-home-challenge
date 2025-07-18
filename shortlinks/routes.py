@@ -1,19 +1,13 @@
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, Response, status
+from fastapi import APIRouter, Depends, Response, status
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, HttpUrl
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from .db import get_session
-from .shortlink_service import ShortlinkService
+from core.db import get_session
 
-
-class DetailResponse(BaseModel):
-    """A response giving more detail about the returned status code"""
-
-    detail: str
-    """The detail message"""
+from .service import ShortlinkService
 
 
 class ShortlinkCreate(BaseModel):
@@ -33,24 +27,10 @@ class ShortlinkResponse(BaseModel):
     """THe URL the shortlink can be accessed at"""
 
 
-app = FastAPI()
+router = APIRouter()
 
 
-@app.get("/stats", response_model=DetailResponse)
-async def get_stats(response: Response) -> DetailResponse:
-    # TODO
-    response.status_code = status.HTTP_404_NOT_FOUND
-    return DetailResponse(detail="Not Found")
-
-
-@app.get("/stats/{slug}", response_model=DetailResponse)
-async def get_stats_for_slug(response: Response) -> DetailResponse:
-    # TODO
-    response.status_code = status.HTTP_404_NOT_FOUND
-    return DetailResponse(detail="Not Found")
-
-
-@app.post("/shorten", status_code=status.HTTP_201_CREATED, response_model=ShortlinkResponse, name="Shorten URL")
+@router.post("/shorten", status_code=status.HTTP_201_CREATED, response_model=ShortlinkResponse, name="Shorten URL")
 async def post_shorten(
     shortlink_create: ShortlinkCreate,
     session: Annotated[AsyncSession, Depends(get_session)],
@@ -60,15 +40,15 @@ async def post_shorten(
     return ShortlinkResponse(slug=shortlink.slug, short_url=shortlink.short_url)
 
 
-@app.get("/{slug}", status_code=status.HTTP_307_TEMPORARY_REDIRECT, response_model=None, name="Access Shortlink")
+@router.get("/{slug}", status_code=status.HTTP_307_TEMPORARY_REDIRECT, response_model=None, name="Access Shortlink")
 async def get_slug(
     slug: str,
     response: Response,
     session: Annotated[AsyncSession, Depends(get_session)],
-) -> RedirectResponse | DetailResponse:
+) -> RedirectResponse | dict[str, str]:
     """Redirect using the given shortlink, or return a 404 if none is found"""
     shortlink = await ShortlinkService.from_slug(slug, session)
     if shortlink:
         return RedirectResponse(shortlink.long_url)
     response.status_code = status.HTTP_404_NOT_FOUND
-    return DetailResponse(detail="Not Found")
+    return {"detail": "Not Found"}

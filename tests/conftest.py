@@ -5,8 +5,8 @@ from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel.pool import StaticPool
 
-from src.api import app
-from src.db import get_session
+from core.api import app
+from core.db import get_session
 
 
 @pytest.fixture()

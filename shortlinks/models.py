@@ -5,7 +5,7 @@ from functools import cached_property
 import shortuuid
 from sqlmodel import Field, SQLModel
 
-from .config import get_settings
+from core.config import get_settings
 
 
 class Shortlink(SQLModel, table=True):

@@ -7,8 +7,11 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 from sqlmodel import SQLModel
 
-from src import models  # noqa: F401 # pyright: ignore[reportUnusedImport] ensure models are registered
-from src.config import get_settings
+from core.config import get_settings
+
+# ensure models are registered
+from shortlinks import models as shortlinks_models  # noqa: F401  # pyright: ignore[reportUnusedImport]
+from stats import models as stats_models  # noqa: F401 # pyright: ignore[reportUnusedImport]
 
 config = context.config
 if config.config_file_name is not None:

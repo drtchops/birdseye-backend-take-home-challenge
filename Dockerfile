@@ -14,7 +14,9 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-install-project --no-dev
 COPY alembic.ini ./
 COPY migrations ./migrations
-COPY src ./src
+COPY core ./core
+COPY shortlinks ./shortlinks
+COPY stats ./stats
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev
 
@@ -24,11 +26,11 @@ COPY startlocal.sh ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --all-extras --dev
 ENV PATH="/app/.venv/bin:$PATH"
-CMD ["fastapi", "dev", "--host", "0.0.0.0", "src/api.py"]
+CMD ["fastapi", "dev", "--host", "0.0.0.0", "core/api.py"]
 
 
 FROM python:$PYTHON_VERSION-alpine AS production
 WORKDIR /app
 COPY --from=builder /app /app
 ENV PATH="/app/.venv/bin:$PATH"
-CMD ["gunicorn", "src.api:app", "-b", "0.0.0.0:8000", "-w", "4", "-k", "uvicorn_worker.UvicornWorker"]
+CMD ["gunicorn", "core.api:app", "-b", "0.0.0.0:8000", "-w", "4", "-k", "uvicorn_worker.UvicornWorker"]
