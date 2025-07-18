@@ -23,6 +23,7 @@ services:
       - "5678:5678"
     environment:
       - DATABASE_URL=postgresql+psycopg_async://birdseye:birdseye@db/birdseye
+      - SERVICE_ROOT=http://localhost:8000
     command: sh startlocal.sh
     depends_on:
       db:

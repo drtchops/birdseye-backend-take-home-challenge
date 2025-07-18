@@ -9,16 +9,18 @@ ENV UV_COMPILE_BYTECODE=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONFAULTHANDLER=1
+COPY pyproject.toml uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --locked --no-install-project --no-dev
-COPY . /app
+COPY alembic.ini ./
+COPY migrations ./migrations
+COPY src ./src
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev
 
 
 FROM builder AS development
+COPY startlocal.sh ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked
 ENV PATH="/app/.venv/bin:$PATH"

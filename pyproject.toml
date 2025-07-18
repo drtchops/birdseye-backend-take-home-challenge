@@ -20,13 +20,15 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "aiosqlite>=0.21.0",
     "debugpy>=1.8.15",
+    "ipython>=9.4.0",
     "pyright>=1.1.403",
     "pytest>=8.4.1",
     "ruff>=0.12.3",
 ]
 
-[tool.ruff]
+[tool.ruff.lint]
 select = ["E", "F", "W", "A", "B", "PLC", "PLE", "PLW", "I", "RUF", "TC", "UP"]
 
 [tool.alembic]
