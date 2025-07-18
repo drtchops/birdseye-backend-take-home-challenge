@@ -22,7 +22,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 FROM builder AS development
 COPY startlocal.sh ./
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked
+    uv sync --locked --all-extras --dev
 ENV PATH="/app/.venv/bin:$PATH"
 CMD ["fastapi", "dev", "--host", "0.0.0.0", "src/api.py"]
 
