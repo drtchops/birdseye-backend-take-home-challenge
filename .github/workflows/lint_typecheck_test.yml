@@ -2,6 +2,9 @@ name: Lint, Typecheck, Test
 
 on: [push]
 
+env:
+  DATABASE_URL: "sqlite+aiosqlite://"
+
 jobs:
   test:
     name: python
