@@ -7,7 +7,7 @@ env:
 
 jobs:
   test:
-    name: python
+    name: Lint, Typecheck, Test
     runs-on: ubuntu-latest
 
     steps:

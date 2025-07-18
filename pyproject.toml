@@ -34,6 +34,11 @@ line-length = 120
 [tool.ruff.lint]
 select = ["E", "F", "W", "A", "B", "PLC", "PLE", "PLW", "I", "RUF", "TC", "UP"]
 
+[tool.pyright]
+typeCheckingMode = "strict"
+exclude = ["**/__pycache__", "**/.*", "locustfile.py"]
+ignore = ["migrations/versions/**"]
+
 [tool.alembic]
 script_location = "%(here)s/migrations"
 file_template = "%%(year)d_%%(month).2d_%%(day).2d_%%(hour).2d%%(minute).2d-%%(rev)s_%%(slug)s"
