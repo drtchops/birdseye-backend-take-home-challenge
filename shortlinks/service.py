@@ -1,4 +1,8 @@
+from collections.abc import Sequence
+from uuid import UUID
+
 import shortuuid
+from sqlmodel import col, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from .models import Shortlink
@@ -36,3 +40,18 @@ class ShortlinkService:
         session.add(shortlink)
         await session.commit()
         return shortlink
+
+    @classmethod
+    async def get_by_ids(cls, ids: Sequence[UUID], session: AsyncSession) -> dict[UUID, Shortlink]:
+        """Returns a mapping of UUID to Shortlink for the requested ids.
+
+        :param ids: A sequence of shortlink UUIDs
+        :type ids: Sequence[UUID]
+        :param session: An async session connected to a database
+        :type session: AsyncSession
+        :return: A mapping of UUID to Shortlink
+        :rtype: dict[UUID, Shortlink]
+        """
+        statement = select(Shortlink).where(col(Shortlink.id).in_(ids))
+        results = await session.exec(statement)
+        return {shortlink.id: shortlink for shortlink in results}
