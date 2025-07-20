@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     service_root: str = ""
     """The root URL for the active service"""
 
+    sentry_dsn: str = ""
+    """The DSN for Sentry integration"""
+
     model_config: ClassVar[SettingsConfigDict] = SettingsConfigDict(env_file=".env")
 
 
