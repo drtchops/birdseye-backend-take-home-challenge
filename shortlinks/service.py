@@ -22,7 +22,10 @@ class ShortlinkService:
         :returns: The retrieved Shortlink instance or None if not found
         :rtype: Shortlink | None
         """
-        uuid = shortuuid.decode(slug)
+        try:
+            uuid = shortuuid.decode(slug)
+        except ValueError:
+            return None
         return await session.get(Shortlink, uuid)
 
     @classmethod

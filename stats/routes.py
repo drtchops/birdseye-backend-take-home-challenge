@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Path, Query, Response, status
+from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from core.db import get_session
@@ -26,12 +27,10 @@ async def get_stats(
 @router.get("/stats/{slug}", name="Stats for Shortlink", response_model=ShortlinkWithStats)
 async def get_stats_for_slug(
     slug: Annotated[str, Path(description="The slug used to identify the shortlink")],
-    response: Response,
     session: Annotated[AsyncSession, Depends(get_session)],
-) -> dict[str, str] | ShortlinkWithStats:
+) -> Response | ShortlinkWithStats:
     """Gets the stats for a specific shortlink"""
     shortlink = await ShortlinkService.from_slug(slug, session)
     if not shortlink:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return {"detail": "Not Found"}
+        return JSONResponse({"detail": "Not Found"}, status_code=status.HTTP_404_NOT_FOUND)
     return await StatsService.get_shortlink_stats(shortlink, session)

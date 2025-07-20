@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 from typing import Annotated, Self
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Path, Response, status
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import BaseModel, Field, HttpUrl
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -52,15 +52,13 @@ async def post_shorten(
 @router.get("/{slug}", status_code=status.HTTP_307_TEMPORARY_REDIRECT, response_model=None, name="Access Shortlink")
 async def get_slug(
     slug: Annotated[str, Path(description="The slug used to identify the shortlink")],
-    response: Response,
     background_tasks: BackgroundTasks,
     session: Annotated[AsyncSession, Depends(get_session)],
-) -> RedirectResponse | dict[str, str]:
+) -> Response:
     """Redirect using the given shortlink, or return a 404 if none is found"""
     shortlink = await ShortlinkService.from_slug(slug, session)
     if not shortlink:
-        response.status_code = status.HTTP_404_NOT_FOUND
-        return {"detail": "Not Found"}
+        return JSONResponse({"detail": "Not Found"}, status_code=status.HTTP_404_NOT_FOUND)
 
     background_tasks.add_task(StatsService.record_visit, shortlink.id, datetime.now(UTC), session)
     return RedirectResponse(shortlink.long_url)

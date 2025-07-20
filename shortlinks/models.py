@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from functools import cached_property
 
 import shortuuid
-from sqlmodel import Field, SQLModel
+from sqlmodel import Column, DateTime, Field, SQLModel
 
 from core.config import get_settings
 
@@ -17,7 +17,10 @@ class Shortlink(SQLModel, table=True):
     long_url: str
     """The long URL that a shortlink redirects to"""
 
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(UTC),
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+    )
     """When the shortlink was created"""
 
     @cached_property

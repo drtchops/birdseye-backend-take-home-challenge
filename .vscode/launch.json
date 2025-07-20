@@ -2,11 +2,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug dockerized server",
+      "name": "Debug server",
       "type": "debugpy",
       "request": "attach",
       "connect": { "host": "localhost", "port": 5678 },
-      "pathMappings": [{ "localRoot": "${workspaceFolder}", "remoteRoot": "/app" }]
+      "pathMappings": [{ "localRoot": "${workspaceFolder}", "remoteRoot": "/app" }],
+      "justMyCode": true
+    },
+    {
+      "name": "Debug pytests",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": { "host": "localhost", "port": 5679 },
+      "pathMappings": [{ "localRoot": "${workspaceFolder}", "remoteRoot": "/app" }],
+      "justMyCode": false
     }
   ]
 }

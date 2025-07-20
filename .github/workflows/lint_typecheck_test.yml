@@ -2,13 +2,25 @@ name: Lint, Typecheck, Test
 
 on: [push]
 
-env:
-  DATABASE_URL: "sqlite+aiosqlite://"
-
 jobs:
   test:
     name: Lint, Typecheck, Test
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "postgresql+psycopg_async://birdseye:birdseye@localhost/birdseye"
+
+    services:
+      db:
+        image: postgres:16
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_USER: birdseye
+          POSTGRES_PASSWORD: birdseye
+          POSTGRES_DB: birdseye_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 1s
 
     steps:
       - uses: actions/checkout@v4

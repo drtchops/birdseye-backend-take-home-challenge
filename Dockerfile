@@ -23,6 +23,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 FROM builder AS development
 COPY startlocal.sh ./
+COPY tests ./tests
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --all-extras --dev
 ENV PATH="/app/.venv/bin:$PATH"

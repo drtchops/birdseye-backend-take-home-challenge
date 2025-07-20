@@ -64,7 +64,7 @@ class StatsService:
         :type session: AsyncSession
         """
         # One disadvantage with SQLModel is it's not as nice to do raw optimized SQL like this
-        await session.execute(  # pyright: ignore[reportDeprecated]
+        await super(AsyncSession, session).execute(
             text("""
                 INSERT INTO shortlinkstat AS sls
                     (shortlink_id, visits, last_visit)
