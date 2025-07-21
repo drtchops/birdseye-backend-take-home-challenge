@@ -18,6 +18,7 @@ from shortlinks.models import Shortlink
 
 @pytest.fixture(autouse=True, scope="session")
 def test_settings() -> Settings:
+    """Project settings overriden with test settings"""
     settings = get_settings()
     os.environ["DATABASE_URL"] = f"{settings.database_url}_test"
     os.environ["SERVICE_ROOT"] = "http://test"
@@ -33,6 +34,7 @@ def anyio_backend() -> str:
 
 @pytest.fixture(autouse=True, scope="session")
 async def db_models(test_settings: Settings) -> None:
+    """A fixutre to clear (if required) and create the test database"""
     url, db_name = test_settings.database_url.rsplit("/", maxsplit=1)
     base_engine = create_async_engine(f"{url}/postgres")
     async with base_engine.connect() as conn:
@@ -46,7 +48,7 @@ async def db_models(test_settings: Settings) -> None:
 
 @pytest.fixture()
 async def session(test_settings: Settings) -> AsyncGenerator[AsyncSession]:
-    """An async session to a test database"""
+    """An async session to a test database with all model schema loaded"""
     engine = create_async_engine(test_settings.database_url, poolclass=StaticPool)
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
@@ -72,6 +74,7 @@ def client(session: AsyncSession) -> Generator[AsyncClient]:
 
 @pytest.fixture()
 async def shortlink(session: AsyncSession) -> Shortlink:
+    """An example shortlink instance"""
     shortlink = Shortlink(long_url="https://www.example.com/very/long/url")
     session.add(shortlink)
     await session.commit()
@@ -80,6 +83,7 @@ async def shortlink(session: AsyncSession) -> Shortlink:
 
 @pytest.fixture()
 async def shortlink_list(session: AsyncSession) -> list[Shortlink]:
+    """A list of 100 shortlinks"""
     shortlinks: list[Shortlink] = []
     for i in range(100):
         shortlink = Shortlink(long_url=f"https://www.example.com/very/long/url/{i}")

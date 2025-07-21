@@ -15,7 +15,7 @@ engine = create_async_engine(settings.database_url)
 
 
 async def get_session() -> AsyncGenerator[AsyncSession]:
-    """Get a new async session for the configured database engine. To be used in a `with` block."""
+    """Get a new async session for the configured database engine. To be used as a FastAPI dependency."""
     async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
     async with async_session() as session:
         yield session

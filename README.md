@@ -28,6 +28,9 @@ The local docker server is already enabled for debugging. A VSCode launch config
 - Alembic: Migration system for SQLAlchemy that's easy to configure.
 - gunicorn + uvicorn workers: Production server, used together as recommended by uvicorn docs.
 - shortuuid: Used to create URL-safe UUIDs.
+- Github Actions: CI/CD for automated testing and deployments.
+- Fly.io: First time trying this for deployment, it was more or less one click. Provides some nice metrics.
+- Sentry: For error reporting.
 
 ### Dev tools
 
@@ -47,9 +50,33 @@ When creating a shortlink for a URL that already exists the service creates a du
 
 Stats are one-to-one with shortlinks via their UUID. When a shortlink is visited, a background job is started to update the stats so the user has to wait as little as possible for the redirect. Updating the stats uses a raw SQL query that updates values in-place to ensure that there are no race conditions when multiple people access a shortlink at the same time.
 
+If I spent more time on it I would work to decouple the domains a little more. Instead of directly calling a background task I would setup some sort of event architecture. I would also think about reworking the shortlink+stats consolidation in the stats endpoint to not live inside of the stats domain.
+
+### Data model
+
+#### shortlink
+
+A mapping of created shortlink UUID to provided long URL.
+
+| Column     | Type                     | Nullable | Index | Notes                   |
+| ---------- | ------------------------ | -------- | ----- | ----------------------- |
+| id         | uuid                     | False    | True  | primary key             |
+| long_url   | varchar(2083)            | False    | False |                         |
+| created_at | timestamp with time zone | False    | False | automatically populated |
+
+#### shortlinkstat
+
+Optional stats tracked for a shortlink, one-to-one with that table.
+
+| Column       | Type                     | Nullable | Index | Notes                                    |
+| ------------ | ------------------------ | -------- | ----- | ---------------------------------------- |
+| shortlink_id | uuid                     | False    | True  | primary key, foreign key to shortlink.id |
+| visits       | integer                  | False    | True  |                                          |
+| last_visit   | timestamp with time zone | False    | True  |automatically populated                   |
+
 ## Native setup
 
-If you would like to install and run the app natively to understand all the parts, you will have to install some additional requirements.
+If you would like to install and run the app natively you will have to install some additional requirements.
 
 1. Install and run PostgreSQL 16
 1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)

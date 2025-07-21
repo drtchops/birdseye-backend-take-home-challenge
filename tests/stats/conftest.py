@@ -9,6 +9,7 @@ from stats.models import ShortlinkStat
 
 @pytest.fixture()
 async def shortlink_with_stats(session: AsyncSession, shortlink: Shortlink) -> Shortlink:
+    """A shortlink with some visit stats"""
     stats = ShortlinkStat(
         shortlink_id=shortlink.id,
         visits=10,
@@ -21,6 +22,7 @@ async def shortlink_with_stats(session: AsyncSession, shortlink: Shortlink) -> S
 
 @pytest.fixture()
 async def shortlink_list_with_stats(session: AsyncSession, shortlink_list: list[Shortlink]) -> list[Shortlink]:
+    """A list of 100 shortlinks, each with varying visit stats"""
     start_dt = datetime(2025, 1, 1, 12, 0, tzinfo=UTC)
     for i, shortlink in enumerate(shortlink_list):
         stats = ShortlinkStat(
